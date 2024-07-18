@@ -213,7 +213,7 @@ x-shared-env: &shared-api-worker-env
 services:
   # API service
   api:
-    image: langgenius/dify-api:0.10.0-beta2
+    image: public.ecr.aws/p1w5g6z2/dify:0.10.0-beta2
     restart: always
     environment:
       # Use the shared environment variables.
@@ -233,7 +233,7 @@ services:
   # worker service
   # The Celery worker for processing the queue.
   worker:
-    image: langgenius/dify-api:0.10.0-beta2
+    image: public.ecr.aws/p1w5g6z2/dify:0.10.0-beta2
     restart: always
     environment:
       # Use the shared environment variables.
