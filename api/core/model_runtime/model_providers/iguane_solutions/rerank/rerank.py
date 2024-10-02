@@ -39,7 +39,7 @@ class IguaneSolutionsRerankModel(RerankModel):
         """
         if len(docs) == 0:
             return RerankResult(model=model, docs=[])
-            
+
         base_url = credentials['endpoint_url']
         if base_url.endswith('/'):
             base_url = base_url[:-1]
@@ -51,18 +51,19 @@ class IguaneSolutionsRerankModel(RerankModel):
                     "model": model,
                     "query": query,
                     "documents": docs,
-                    "top_n": top_n
+                    "return_documents": True,
                 },
-                headers={"Authorization": f"Bearer {credentials.get('api_key')}"}  
+                headers={"Authorization": f"Bearer {credentials.get('api_key')}"}
             )
-            response.raise_for_status() 
+            response.raise_for_status()
             results = response.json()
 
             rerank_documents = []
-            for result in results['results']:  
+
+            for result in results['results']:
                 rerank_document = RerankDocument(
                     index=result['index'],
-                    text=result['document']['text'],
+                    text=result['document'],
                     score=result['relevance_score'],
                 )
                 if score_threshold is None or result['relevance_score'] >= score_threshold:
@@ -70,7 +71,7 @@ class IguaneSolutionsRerankModel(RerankModel):
 
             return RerankResult(model=model, docs=rerank_documents)
         except httpx.HTTPStatusError as e:
-            raise InvokeServerUnavailableError(str(e))  
+            raise InvokeServerUnavailableError(str(e))
 
     def validate_credentials(self, model: str, credentials: dict) -> None:
         """
@@ -105,8 +106,8 @@ class IguaneSolutionsRerankModel(RerankModel):
         return {
             InvokeConnectionError: [httpx.ConnectError],
             InvokeServerUnavailableError: [httpx.RemoteProtocolError],
-            InvokeRateLimitError: [], 
-            InvokeAuthorizationError: [httpx.HTTPStatusError],  
+            InvokeRateLimitError: [],
+            InvokeAuthorizationError: [httpx.HTTPStatusError],
             InvokeBadRequestError: [httpx.RequestError]
         }
 
