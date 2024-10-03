@@ -7,6 +7,8 @@ from urllib.parse import urljoin
 import numpy as np
 import requests
 
+from core.embedding.embedding_constant import EmbeddingInputType
+
 from core.model_runtime.entities.common_entities import I18nObject
 from core.model_runtime.entities.model_entities import (
     AIModelEntity,
@@ -23,10 +25,15 @@ from core.model_runtime.model_providers.openai_api_compatible.text_embedding.tex
 
 
 class IguaneSolutionsEmbeddingModel(OAICompatEmbeddingModel):
-    def _invoke(self, model: str, credentials: dict,
-            texts: list[str], user: Optional[str] = None) \
-        -> TextEmbeddingResult:
-        return super()._invoke(model, credentials, texts, user)
-        
+    def _invoke(
+        self,
+        model: str,
+        credentials: dict,
+        texts: list[str],
+        user: Optional[str] = None,
+        input_type: EmbeddingInputType = EmbeddingInputType.DOCUMENT,
+    ) -> TextEmbeddingResult:
+        return super()._invoke(model, credentials, texts, user, input_type)
+
     def validate_credentials(self, model: str, credentials: dict) -> None:
         super().validate_credentials(model, credentials)
